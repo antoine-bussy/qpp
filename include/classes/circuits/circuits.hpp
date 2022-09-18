@@ -2246,8 +2246,9 @@ class QCircuit : public IDisplay, public IJSON {
                 qpp::Gates::get_no_thread_local_instance().get_name(U);
             name = gate_name.empty() ? "CTRL" : "CTRL-" + gate_name;
         }
-        std::size_t hashU = hash_eigen(U);
-        add_hash_(hashU, U);
+        auto const UU = kronpow(U, target.size());
+        std::size_t hashU = hash_eigen(UU);
+        add_hash_(hashU, UU);
         gates_.emplace_back(GateType::SINGLE_CTRL_MULTIPLE_TARGET, hashU,
                             std::vector<idx>{ctrl}, target,
                             std::vector<idx>{shift}, name);
@@ -2443,8 +2444,9 @@ class QCircuit : public IDisplay, public IJSON {
                 qpp::Gates::get_no_thread_local_instance().get_name(U);
             name = gate_name.empty() ? "CTRL" : "CTRL-" + gate_name;
         }
-        std::size_t hashU = hash_eigen(U);
-        add_hash_(hashU, U);
+        auto const UU = kronpow(U, target.size());
+        std::size_t hashU = hash_eigen(UU);
+        add_hash_(hashU, UU);
         gates_.emplace_back(GateType::MULTIPLE_CTRL_MULTIPLE_TARGET, hashU,
                             ctrl, target, shift, name);
         step_types_.emplace_back(StepType::GATE);
