@@ -61,7 +61,30 @@ TEST(qpp_QCircuit_compress, AllTests) {}
 /// BEGIN QCircuit& QCircuit::CTRL(const cmat& U,
 ///       const std::vector<idx>& ctrl, const std::vector<idx>& target,
 ///       const std::vector<idx>& shift = {}, std::string name = {})
-TEST(qpp_QCircuit_CTRL, MultipleCtrlsMultipleTargets) {}
+TEST(qpp_QCircuit_CTRL, MultipleCtrlsMultipleTargets)
+{
+    auto const& X = qpp::gt.X;
+
+    auto const circuit = qpp::QCircuit{ 3u }
+        .CTRL(X, { 0u }, { 1u, 2u })
+        ;
+    auto engine = qpp::QEngine{ circuit };
+
+    auto const expected_circuit = qpp::QCircuit{ 3u }
+        .CTRL(X, 0u, 1u)
+        .CTRL(X, 0u, 2u)
+        ;
+    auto expected_engine = qpp::QEngine{ expected_circuit };
+
+    for(auto i = 0; i < 8; ++i)
+    {
+        auto const psi = Eigen::VectorXcd::Unit(8, i);
+        EXPECT_NO_THROW(engine.reset().set_psi(psi).execute());
+        EXPECT_NO_THROW(expected_engine.reset().set_psi(psi).execute());
+
+        EXPECT_TRUE(engine.get_psi().isApprox(expected_engine.get_psi()));
+    }
+}
 /******************************************************************************/
 /// BEGIN QCircuit& QCircuit::CTRL(const cmat& U,
 ///       const std::vector<idx>& ctrl, idx target,
