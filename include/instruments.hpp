@@ -401,10 +401,9 @@ measure(const Eigen::MatrixBase<Derived>& A, const std::vector<cmat>& Ks,
     // resulting states
     std::vector<expr_t<Derived>> outstates;
 
-    if (destructive)
-        outstates.resize(Ks.size(), cmat::Zero(Dsubsys_bar, Dsubsys_bar));
-    else
-        outstates.resize(Ks.size(), cmat::Zero(D, D));
+    auto const rows = destructive ? Dsubsys_bar : D;
+    auto const cols = internal::check_cvector(rA) ? 1 : rows;
+    outstates.resize(Ks.size(), cmat::Zero(rows, cols));
 
     //************ ket ************//
     if (internal::check_cvector(rA)) // column vector
