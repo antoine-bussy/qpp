@@ -66,7 +66,15 @@ TEST(qpp_measure, SubsysKrausInitList) {}
 ///       measure(const Eigen::MatrixBase<Derived>& A,
 ///       const std::initializer_list<cmat>& Ks, const std::vector<idx>& target,
 ///       idx d = 2, bool destructive = true)
-TEST(qpp_measure, SubsysKrausInitListQubits) {}
+TEST(qpp_measure, SubsysKrausInitListQubits)
+{
+    using namespace qpp::literals;
+
+    auto const psi = Eigen::Vector4cd::Unit(0).eval();
+
+    EXPECT_EXIT({ qpp::measure(psi, { 00_prj, 01_prj, 10_prj, 11_prj }, { 0, 1 }, 2, false); exit(0);},
+        ::testing::ExitedWithCode(0), "");
+}
 /******************************************************************************/
 /// BEGIN template <typename Derived>
 ///       std::tuple<idx, std::vector<double>, std::vector<cmat>>
