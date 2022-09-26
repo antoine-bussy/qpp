@@ -108,8 +108,21 @@ using dyn_row_vect = Eigen::Matrix<Scalar, 1, Eigen::Dynamic>;
  * \brief Eigen type (ket/density matrix) deduced from the expression Derived
  */
 template <typename Derived>
-using expr_t =
-    typename std::decay<decltype(std::declval<Derived>().eval())>::type;
+using eval_t =
+    std::decay_t<typename Eigen::MatrixBase<Derived>::EvalReturnType>;
+
+/**
+ * \brief Eigen type (ket/density matrix) deduced from the expression Derived, but with a dynamic number of rows
+ * \details Note that the maximum number of rows is conserved
+ */
+template <typename Derived>
+using expr_t = Eigen::Matrix<
+    typename eval_t<Derived>::Scalar
+    , Eigen::Dynamic
+    , eval_t<Derived>::ColsAtCompileTime
+    , eval_t<Derived>::Options
+    , eval_t<Derived>::MaxRowsAtCompileTime
+    , eval_t<Derived>::MaxColsAtCompileTime>;
 
 /**
  * \brief Quantumly-accessible Random Access Memory (qRAM)
