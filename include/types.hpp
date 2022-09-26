@@ -112,17 +112,35 @@ using eval_t =
     std::decay_t<typename Eigen::MatrixBase<Derived>::EvalReturnType>;
 
 /**
- * \brief Eigen type (ket/density matrix) deduced from the expression Derived, but with a dynamic number of rows
- * \details Note that the maximum number of rows is conserved
+ * \brief Detect if the expression Derived is a bra at compile time
+ */
+template <typename Derived>
+auto constexpr is_bra()
+{
+    return (eval_t<Derived>::RowsAtCompileTime == 1);
+}
+
+/**
+ * \brief Detect if the expression Derived is a ket at compile time
+ */
+template <typename Derived>
+auto constexpr is_ket()
+{
+    return (eval_t<Derived>::ColsAtCompileTime == 1);
+}
+
+/**
+ * \brief Eigen type (bra/ket/density matrix) deduced from the expression Derived
  */
 template <typename Derived>
 using expr_t = Eigen::Matrix<
     typename eval_t<Derived>::Scalar
-    , Eigen::Dynamic
-    , eval_t<Derived>::ColsAtCompileTime
+    , is_bra<Derived>() ? 1 : Eigen::Dynamic
+    , is_ket<Derived>() ? 1 : Eigen::Dynamic
     , eval_t<Derived>::Options
-    , eval_t<Derived>::MaxRowsAtCompileTime
-    , eval_t<Derived>::MaxColsAtCompileTime>;
+    , is_bra<Derived>() ? 1 : Eigen::Dynamic
+    , is_ket<Derived>() ? 1 : Eigen::Dynamic
+    >;
 
 /**
  * \brief Quantumly-accessible Random Access Memory (qRAM)
