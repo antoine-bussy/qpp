@@ -1215,6 +1215,16 @@ class QEngineT : public QBaseEngine<T, QCircuit> {
         return *this;
     }
 
+    virtual QEngineT& reset(T const& qstate, bool reset_stats = true) {
+        qeng_st_.reset(qstate);
+
+        if (reset_stats) {
+            this->reset_stats();
+        }
+
+        return *this;
+    }
+
     /**
      * \brief Resets the engine
      *
@@ -1225,13 +1235,7 @@ class QEngineT : public QBaseEngine<T, QCircuit> {
      * measurement statistics hash table
      */
     virtual QEngineT& reset(bool reset_stats = true) {
-        qeng_st_.reset(qeng_st_.qstate_);
-
-        if (reset_stats) {
-            this->reset_stats();
-        }
-
-        return *this;
+        return this->reset(qeng_st_.qstate_, reset_stats);
     }
 
     /**
