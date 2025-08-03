@@ -1328,7 +1328,6 @@ class QEngineT : public QBaseEngine<T, QCircuit> {
         // save the engine state
         auto engine_state_copy = qeng_st_;
 
-        this->reset(false); // keep the statistics
         this->set_ensure_post_selection(
             engine_state_copy.ensure_post_selection_);
         this->set_max_post_selection_reps(
